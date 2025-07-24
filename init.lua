@@ -199,6 +199,10 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+vim.keymap.set('n', '<C-d>', '10j')
+vim.keymap.set('n', '<C-u>', '10k')
+vim.keymap.set('n', 'gd', vim.lsp.buf.definition)
+
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
 -- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
@@ -413,6 +417,9 @@ require('lazy').setup({
         --   },
         -- },
         -- pickers = {}
+        defaults = {
+          file_ignore_patterns = { "%.git\\", "%node_modules\\", "%bin\\", "%obj\\", "%target\\" },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -428,13 +435,15 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sf', function()
+        require('telescope.builtin').find_files()
+      end)
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+      vim.keymap.set('n', '<leader><tab>', require('telescope.builtin').oldfiles)
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
@@ -671,6 +680,9 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
+        omnisharp = {
+          root_dir = require('lspconfig.util').root_pattern('*.sln', '*.csproj', '.git'),
+        },
         -- clangd = {},
         -- gopls = {},
         -- pyright = {},
@@ -963,6 +975,19 @@ require('lazy').setup({
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
+  {
+    'nvim-tree/nvim-tree.lua',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require('nvim-tree').setup {
+        hijack_cursor = true,
+        update_focused_file = { enable = true, update_cwd = true },
+        view = { width = 30, side = 'left' },
+        filters = { dotfiles = false, custom = { '.git' } },
+      }
+      vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>')
+    end,
+  }
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
