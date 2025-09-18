@@ -5,6 +5,14 @@
 return {
   {
     'lewis6991/gitsigns.nvim',
+    init = function()
+      -- Global command to toggle both signs and blame in one go
+      vim.api.nvim_create_user_command('GitUiToggle', function()
+        local gs = require 'gitsigns'
+        gs.toggle_signs()
+        gs.toggle_current_line_blame()
+      end, { desc = 'Toggle git signs and blame' })
+    end,
     opts = {
       on_attach = function(bufnr)
         local gitsigns = require 'gitsigns'
@@ -54,7 +62,11 @@ return {
         end, { desc = 'git [D]iff against last commit' })
         -- Toggles
         map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line' })
-        map('n', '<leader>tD', gitsigns.preview_hunk_inline, { desc = '[T]oggle git show [D]eleted' })
+        map('n', '<leader>tD', gitsigns.toggle_deleted, { desc = '[T]oggle git show [D]eleted' })
+        map('n', '<leader>tg', gitsigns.toggle_signs, { desc = '[T]oggle git [g]utter signs' })
+        map('n', '<leader>tG', function()
+          vim.cmd.GitUiToggle()
+        end, { desc = '[T]oggle both [G]it signs & blame' })
       end,
     },
   },

@@ -176,6 +176,12 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- Quick exit from diff mode: turns off diff and closes extra windows
+vim.keymap.set('n', '<leader>tx', function()
+  vim.cmd('diffoff!')
+  vim.cmd('only')
+end, { desc = 'Exit diff (diffoff! | only)' })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -305,6 +311,23 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
     },
+  },
+
+  { -- Commenting utility: gcc/gc and <leader>/ for toggling
+    'numToStr/Comment.nvim',
+    opts = {},
+    config = function()
+      require('Comment').setup {}
+      -- Extra keymaps: <leader>/ to toggle comment
+      vim.keymap.set('n', '<leader>/', function()
+        require('Comment.api').toggle.linewise.current()
+      end, { desc = 'Toggle comment line' })
+      vim.keymap.set('v', '<leader>/', function()
+        local esc = vim.api.nvim_replace_termcodes('<ESC>', true, false, true)
+        vim.api.nvim_feedkeys(esc, 'nx', false)
+        require('Comment.api').toggle.linewise(vim.fn.visualmode())
+      end, { desc = 'Toggle comment selection' })
+    end,
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -437,7 +460,7 @@ require('lazy').setup({
         -- },
         -- pickers = {}
         defaults = {
-          file_ignore_patterns = { "%.git\\", "%node_modules\\", "%bin\\", "%obj\\", "%target\\" },
+          file_ignore_patterns = { '%.git\\', '%node_modules\\', '%bin\\', '%obj\\', '%target\\' },
         },
         extensions = {
           ['ui-select'] = {
@@ -715,6 +738,12 @@ require('lazy').setup({
         -- ts_ls = {},
         --
 
+        ts_ls = {
+          settings = {
+            javascript = { format = { enable = false } },
+            typescript = { format = { enable = false } },
+          },
+        },
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -954,7 +983,7 @@ require('lazy').setup({
       }
       vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>')
     end,
-  }
+  },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
@@ -967,10 +996,10 @@ require('lazy').setup({
   --
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns keymaps and toggles
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
