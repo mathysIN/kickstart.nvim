@@ -461,6 +461,13 @@ require('lazy').setup({
         -- pickers = {}
         defaults = {
           file_ignore_patterns = { '%.git\\', '%node_modules\\', '%bin\\', '%obj\\', '%target\\' },
+          mappings = {
+            i = {
+              ['<C-v>'] = function()
+                vim.api.nvim_paste(vim.fn.getreg('+'), true, -1)
+              end,
+            },
+          },
         },
         extensions = {
           ['ui-select'] = {
