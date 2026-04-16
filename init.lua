@@ -114,8 +114,11 @@ vim.o.showmode = false
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
+--  Skip clipboard sync in SSH sessions to avoid conflicts
 vim.schedule(function()
-  vim.o.clipboard = 'unnamedplus'
+  if not os.getenv('SSH_CLIENT') and not os.getenv('SSH_TTY') then
+    vim.o.clipboard = 'unnamedplus'
+  end
 end)
 
 -- Enable break indent
