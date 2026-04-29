@@ -186,8 +186,8 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 
 -- Quick exit from diff mode: turns off diff and closes extra windows
 vim.keymap.set('n', '<leader>tx', function()
-  vim.cmd('diffoff!')
-  vim.cmd('only')
+  vim.cmd 'diffoff!'
+  vim.cmd 'only'
 end, { desc = 'Exit diff (diffoff! | only)' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
@@ -248,6 +248,15 @@ vim.opt.smartindent = false
 
 vim.api.nvim_create_autocmd('FileType', {
   pattern = 'cs',
+  callback = function()
+    vim.opt_local.tabstop = 4
+    vim.opt_local.shiftwidth = 4
+    vim.opt_local.softtabstop = 4
+    vim.opt_local.expandtab = true
+  end,
+})
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'java',
   callback = function()
     vim.opt_local.tabstop = 4
     vim.opt_local.shiftwidth = 4
@@ -472,7 +481,7 @@ require('lazy').setup({
           mappings = {
             i = {
               ['<C-v>'] = function()
-                vim.api.nvim_paste(vim.fn.getreg('+'), true, -1)
+                vim.api.nvim_paste(vim.fn.getreg '+', true, -1)
               end,
             },
           },
@@ -1061,20 +1070,20 @@ require('lazy').setup({
       require('nvim-tree').setup {
         hijack_cursor = true,
         update_focused_file = { enable = true, update_cwd = true },
-        view = { width = 30, side = 'left' },
+        view = { width = 40, side = 'left' },
         filters = { dotfiles = false, custom = { '.git' } },
       }
       vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>')
     end,
   },
   {
-      'MeanderingProgrammer/render-markdown.nvim',
-      dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },            -- if you use the mini.nvim suite
-      -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
-      -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
-      ---@module 'render-markdown'
-      ---@type render.md.UserConfig
-      opts = {},
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' }, -- if you use the mini.nvim suite
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {},
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
