@@ -105,7 +105,12 @@ vim.o.number = true
 -- vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
-vim.o.mouse = 'a'
+-- Disable mouse in SSH to allow terminal selection and context menu
+if os.getenv('SSH_CLIENT') or os.getenv('SSH_TTY') then
+  vim.o.mouse = ''
+else
+  vim.o.mouse = 'a'
+end
 
 -- Don't show the mode, since it's already in the status line
 vim.o.showmode = false
@@ -114,7 +119,7 @@ vim.o.showmode = false
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
---  Skip clipboard sync in SSH sessions to avoid conflicts
+--  Disable in SSH - use terminal selection instead
 vim.schedule(function()
   if not os.getenv('SSH_CLIENT') and not os.getenv('SSH_TTY') then
     vim.o.clipboard = 'unnamedplus'
