@@ -1065,7 +1065,7 @@ require('lazy').setup({
     config = function()
       require('nvim-tree').setup {
         hijack_cursor = true,
-        update_focused_file = { enable = true, update_cwd = true },
+        update_focused_file = { enable = true, update_cwd = false },
         view = { width = 40, side = 'left' },
         filters = { dotfiles = false, custom = { '.git' } },
       }
